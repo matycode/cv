@@ -3,528 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wyronix V3 | Liquid Glass Trinity</title>
+    <title>Wyronix | Spatial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: 'SF Pro Display';
-            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
-        }
-    </style>
 </head>
 <body>
-    <!-- MESH GRADIENT BACKGROUND -->
-    <div class="mesh-gradient"></div>
-    
-    <!-- DYNAMIC ISLAND -->
-    <div class="dynamic-island" id="dynamicIsland">
-        <div class="island-content">
-            <span class="status-text" id="islandStatus">System: Ready</span>
-            <div class="trinity-pulse" id="trinityPulse">
-                <div class="pulse-segment search-pulse"></div>
-                <div class="pulse-segment analyst-pulse"></div>
-                <div class="pulse-segment developer-pulse"></div>
+
+    <div class="aurora-bg">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+    </div>
+
+    <div class="island-container">
+        <div id="dynamicIsland" class="island-pill idle">
+            <div class="island-content">
+                <div id="islandSpinner" class="spinner hidden"></div>
+                <div id="islandStatusDot" class="status-dot"></div>
+                <span id="islandText" class="island-label">Wyronix Ready</span>
             </div>
         </div>
     </div>
-    <!-- MAIN CONTAINER -->
-    <div class="container">
-        <!-- SIDEBAR -->
-        <aside class="liquid-sidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 100 100" class="logo-svg">
-                            <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z" class="logo-hexagon"/>
-                            <circle cx="50" cy="50" r="20" class="logo-core"/>
-                        </svg>
+
+    <main class="workspace">
+        
+        <header class="glass-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Wyronix <span class="badge">PRO</span></span>
+            </div>
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+        </header>
+
+        <section class="bento-grid">
+
+            <div id="cardSearch" class="glass-panel">
+                <div class="panel-head">
+                    <div class="icon-sq blue-gradient">🌐</div>
+                    <h4>Market Intelligence</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="searchTerminal" class="clean-log">
+                        <div class="empty-state">Waiting for input...</div>
                     </div>
-                    <h1 class="logo-text">Wyronix</h1>
-                    <span class="version-badge">V3</span>
+                    <div id="searchTags" class="tag-row"></div>
                 </div>
             </div>
-            <div class="sidebar-nav">
-                <div class="nav-group">
-                    <h3 class="nav-label">TRINITY CORE</h3>
-                    <button class="nav-item active" data-target="dashboard">
-                        <div class="nav-icon">
-                            <i class="fas fa-chart-network"></i>
-                        </div>
-                        <span class="nav-text">Orchestrator</span>
-                        <div class="nav-badge active"></div>
-                    </button>
-                    <button class="nav-item" data-target="search">
-                        <div class="nav-icon">
-                            <i class="fas fa-radar"></i>
-                        </div>
-                        <span class="nav-text">Search Hub</span>
-                        <div class="nav-badge warning"></div>
-                    </button>
-                    <button class="nav-item" data-target="analyst">
-                        <div class="nav-icon">
-                            <i class="fas fa-brain-circuit"></i>
-                        </div>
-                        <span class="nav-text">Analyst Hub</span>
-                        <div class="nav-badge"></div>
-                    </button>
-                    <button class="nav-item" data-target="developer">
-                        <div class="nav-icon">
-                            <i class="fas fa-code-merge"></i>
-                        </div>
-                        <span class="nav-text">Developer Hub</span>
-                        <div class="nav-badge"></div>
-                    </button>
+
+            <div id="cardAnalyst" class="glass-panel">
+                <div class="panel-head">
+                    <div class="icon-sq purple-gradient">⚡</div>
+                    <h4>Strategic Analyst</h4>
                 </div>
-                <div class="nav-group">
-                    <h3 class="nav-label">BUSINESS LOGIC</h3>
-                    <div class="reality-toggle-container">
-                        <div class="toggle-label">
-                            <i class="fas fa-shield-check"></i>
-                            <span>Reality Check Mode</span>
+                <div class="panel-body centered">
+                    <div id="analystGauges" class="gauge-group opacity-0">
+                        <div class="ring-wrapper">
+                            <svg class="ring-svg" viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                                <circle id="progressHeat" class="ring-val blue" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                            <div class="ring-text">
+                                <span id="valHeat" class="val">0%</span>
+                                <span class="label">Demand</span>
+                            </div>
                         </div>
-                        <label class="liquid-toggle">
-                            <input type="checkbox" id="realityToggle">
-                            <span class="toggle-slider"></span>
-                            <span class="toggle-state">Strict</span>
-                            <span class="toggle-state">Hype</span>
-                        </label>
+                        <div class="ring-wrapper">
+                            <svg class="ring-svg" viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                                <circle id="progressROI" class="ring-val purple" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                            <div class="ring-text">
+                                <span id="valROI" class="val">0%</span>
+                                <span class="label">Viability</span>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <button class="nav-item" data-target="blueprint">
-                        <div class="nav-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <span class="nav-text">Executive Blueprint</span>
-                    </button>
-                    
-                    <button class="nav-item" data-target="market">
-                        <div class="nav-icon">
-                            <i class="fas fa-trend-up"></i>
-                        </div>
-                        <span class="nav-text">Market Intelligence</span>
-                    </button>
-                </div>
-                <div class="nav-group">
-                    <h3 class="nav-label">SYSTEM</h3>
-                    <button class="nav-item" data-target="settings">
-                        <div class="nav-icon">
-                            <i class="fas fa-sliders-h"></i>
-                        </div>
-                        <span class="nav-text">Liquid Settings</span>
-                    </button>
-                    <button class="nav-item" id="initializeSystem">
-                        <div class="nav-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <span class="nav-text">Initialize Trinity</span>
-                        <div class="nav-sparkle"></div>
-                    </button>
+                    <div id="analystVerdict" class="verdict-text hidden"></div>
                 </div>
             </div>
-            <div class="sidebar-footer">
-                <div class="system-health">
-                    <div class="health-metric">
-                        <span class="metric-label">AI Compute</span>
-                        <div class="metric-bar">
-                            <div class="metric-fill" style="width: 42%"></div>
-                        </div>
-                    </div>
-                    <div class="health-metric">
-                        <span class="metric-label">Memory Pressure</span>
-                        <div class="metric-bar">
-                            <div class="metric-fill" style="width: 68%"></div>
-                        </div>
-                    </div>
+
+            <div id="cardDev" class="glass-panel">
+                <div class="panel-head">
+                    <div class="icon-sq green-gradient">🛠️</div>
+                    <h4>Solution Architect</h4>
                 </div>
-                <div class="user-profile">
-                    <div class="profile-avatar">
-                        <i class="fas fa-crown"></i>
+                <div class="panel-body split">
+                    <div id="fileTree" class="file-list">
+                        <div class="root-folder">Project Root</div>
                     </div>
-                    <div class="profile-info">
-                        <span class="profile-name">CEO</span>
-                        <span class="profile-role">Executive Control</span>
-                    </div>
+                    <div id="codePreview" class="code-view"></div>
+                </div>
+                <div class="panel-foot">
+                    <button id="btnExport" class="glass-btn hidden">Download Report ↗</button>
                 </div>
             </div>
-        </aside>
-        <!-- MAIN CONTENT -->
-        <main class="liquid-main">
-            <!-- TRINITY GRID -->
-            <div class="trinity-grid" id="dashboard">
-                <!-- SEARCH HUB (THE HUNTER) -->
-                <div class="hub-card search-hub" id="search">
-                    <div class="hub-header">
-                        <div class="hub-title">
-                            <div class="hub-icon">
-                                <i class="fas fa-radar"></i>
-                            </div>
-                            <h2>Search Hub</h2>
-                            <span class="hub-subtitle">The Hunter</span>
-                        </div>
-                        <div class="hub-status">
-                            <div class="radar-animation">
-                                <div class="radar-sweep"></div>
-                            </div>
-                            <span class="status-label">Active Scanning</span>
-                        </div>
-                    </div>
-                    
-                    <div class="terminal-feed" id="searchTerminal">
-                        <div class="terminal-line">
-                            <span class="terminal-time">[09:42:15]</span>
-                            <span class="terminal-source">[HUNTER]</span>
-                            <span class="terminal-message">Scanning SaaS market for low-competition niches...</span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-time">[09:42:18]</span>
-                            <span class="terminal-source">[HUNTER]</span>
-                            <span class="terminal-message">Identified 42 potential market gaps in AI automation</span>
-                        </div>
-                        <div class="terminal-line highlight">
-                            <span class="terminal-time">[09:42:21]</span>
-                            <span class="terminal-source">[HUNTER]</span>
-                            <span class="terminal-message">🔥 MARKET GAP: "AI-Powered Dropshipping Analytics" - 0.2 competition score</span>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-time">[09:42:25]</span>
-                            <span class="terminal-source">[HUNTER]</span>
-                            <span class="terminal-message">Competitor analysis: 3 major players, avg. MRR: $85k</span>
-                        </div>
-                    </div>
-                    
-                    <div class="discovery-tags" id="discoveryTags">
-                        <div class="tag" data-score="0.2">AI Dropshipping</div>
-                        <div class="tag" data-score="0.3">No-Code SaaS</div>
-                        <div class="tag" data-score="0.8">CRM Automation</div>
-                        <div class="tag" data-score="0.1">Micro-SaaS Tools</div>
-                    </div>
-                    
-                    <div class="hub-controls">
-                        <button class="liquid-btn secondary">
-                            <i class="fas fa-pause"></i>
-                            <span>Pause Scan</span>
-                        </button>
-                        <button class="liquid-btn primary">
-                            <i class="fas fa-filter"></i>
-                            <span>Refine Targets</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- ANALYST HUB (THE BRAIN) -->
-                <div class="hub-card analyst-hub" id="analyst">
-                    <div class="hub-header">
-                        <div class="hub-title">
-                            <div class="hub-icon">
-                                <i class="fas fa-brain-circuit"></i>
-                            </div>
-                            <h2>Analyst Hub</h2>
-                            <span class="hub-subtitle">The Brain</span>
-                        </div>
-                        <div class="hub-status">
-                            <div class="intensity-indicator">
-                                <div class="intensity-dot"></div>
-                                <div class="intensity-dot"></div>
-                                <div class="intensity-dot active"></div>
-                            </div>
-                            <span class="status-label">Deep Analysis</span>
-                        </div>
-                    </div>
-                    
-                    <div class="gauge-grid">
-                        <div class="gauge-container">
-                            <div class="gauge-title">Market Heat</div>
-                            <div class="gauge-wrapper">
-                                <div class="gauge" data-value="78">
-                                    <div class="gauge-fill" style="transform: rotate(140deg);"></div>
-                                    <div class="gauge-center"></div>
-                                    <span class="gauge-value">78%</span>
-                                </div>
-                            </div>
-                            <div class="gauge-label">High Demand Zone</div>
-                        </div>
-                        
-                        <div class="gauge-container">
-                            <div class="gauge-title">Risk Assessment</div>
-                            <div class="gauge-wrapper">
-                                <div class="gauge danger" data-value="32">
-                                    <div class="gauge-fill" style="transform: rotate(57.6deg);"></div>
-                                    <div class="gauge-center"></div>
-                                    <span class="gauge-value">32%</span>
-                                </div>
-                            </div>
-                            <div class="gauge-label">Low Risk</div>
-                        </div>
-                        
-                        <div class="gauge-container">
-                            <div class="gauge-title">ROI Projection</div>
-                            <div class="gauge-wrapper">
-                                <div class="gauge success" data-value="91">
-                                    <div class="gauge-fill" style="transform: rotate(163.8deg);"></div>
-                                    <div class="gauge-center"></div>
-                                    <span class="gauge-value">91%</span>
-                                </div>
-                            </div>
-                            <div class="gauge-label">Exceptional</div>
-                        </div>
-                    </div>
-                    
-                    <div class="insight-panel">
-                        <h4 class="insight-title">
-                            <i class="fas fa-lightbulb"></i>
-                            Strategic Insight
-                        </h4>
-                        <p class="insight-text" id="analystInsight">
-                            Market analysis indicates a 240% growth potential in AI-powered micro-SaaS tools. 
-                            Low competition (0.2 score) with estimated 18-month profitability threshold.
-                        </p>
-                    </div>
-                </div>
-                <!-- DEVELOPER HUB (THE BUILDER) -->
-                <div class="hub-card developer-hub" id="developer">
-                    <div class="hub-header">
-                        <div class="hub-title">
-                            <div class="hub-icon">
-                                <i class="fas fa-code-merge"></i>
-                            </div>
-                            <h2>Developer Hub</h2>
-                            <span class="hub-subtitle">The Builder</span>
-                        </div>
-                        <div class="hub-status">
-                            <div class="build-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 45%"></div>
-                                </div>
-                                <span class="progress-text">45%</span>
-                            </div>
-                            <span class="status-label">Building MVP</span>
-                        </div>
-                    </div>
-                    
-                    <div class="file-explorer">
-                        <div class="explorer-header">
-                            <i class="fas fa-folder-open"></i>
-                            <span>Project Structure</span>
-                            <span class="repo-badge">Git Initialized</span>
-                        </div>
-                        <div class="file-tree" id="fileTree">
-                            <div class="file-item">
-                                <i class="fas fa-folder"></i>
-                                <span class="file-name">/src</span>
-                                <span class="file-status typing">creating...</span>
-                            </div>
-                            <div class="file-item">
-                                <i class="fas fa-file-code"></i>
-                                <span class="file-name">index.js</span>
-                                <span class="file-size">2.4KB</span>
-                            </div>
-                            <div class="file-item">
-                                <i class="fas fa-file-code"></i>
-                                <span class="file-name">api.py</span>
-                                <span class="file-size">1.8KB</span>
-                            </div>
-                            <div class="file-item">
-                                <i class="fas fa-file-code"></i>
-                                <span class="file-name">database.sql</span>
-                                <span class="file-status pending">queued</span>
-                            </div>
-                            <div class="file-item">
-                                <i class="fas fa-file-code"></i>
-                                <span class="file-name">landing.html</span>
-                                <span class="file-status typing">typing...</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="build-controls">
-                        <button class="liquid-btn secondary">
-                            <i class="fas fa-code-branch"></i>
-                            <span>Branch Strategy</span>
-                        </button>
-                        <button class="liquid-btn primary pulse" id="deployButton">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Deploy to Vercel</span>
-                        </button>
-                    </div>
-                    
-                    <div class="repo-link">
-                        <i class="fab fa-github"></i>
-                        <span class="link-text">github.com/wyronix/ai-saas-mvp</span>
-                        <button class="copy-btn">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!-- CHATGPT-X INTERFACE -->
-            <div class="chatgpt-interface" id="market">
-                <div class="quick-prompts">
-                    <button class="prompt-pill" data-prompt="Validate SaaS Idea">
-                        <i class="fas fa-check-circle"></i>
-                        Validate SaaS Idea
-                    </button>
-                    <button class="prompt-pill" data-prompt="Deep Market Scan">
-                        <i class="fas fa-search-plus"></i>
-                        Deep Market Scan
-                    </button>
-                    <button class="prompt-pill" data-prompt="Generate MVP Code">
-                        <i class="fas fa-code"></i>
-                        Generate MVP Code
-                    </button>
-                </div>
-                
-                <div class="chat-input-container">
-                    <div class="input-glow"></div>
-                    <input type="text" 
-                           class="chat-input" 
-                           id="chatInput"
-                           placeholder="Command the Trinity (e.g., 'Find untapped markets in AI automation...')"
-                           autocomplete="off">
-                    <button class="send-button" id="sendCommand">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                    <div class="input-mic">
-                        <i class="fas fa-microphone"></i>
-                    </div>
-                </div>
-                
-                <div class="chat-history" id="chatHistory">
-                    <div class="message ai-message">
-                        <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="message-content">
-                            <p>Wyronix Trinity System initialized. I am ready to hunt, analyze, and build.</p>
-                            <span class="message-time">09:41 AM</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    <!-- EXECUTIVE BLUEPRINT MODAL -->
-    <div class="blueprint-modal" id="blueprintModal">
-        <div class="modal-backdrop" id="modalClose"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <i class="fas fa-file-contract"></i>
-                    <h2>Executive Blueprint</h2>
-                    <span class="modal-subtitle">Generated by Wyronix Trinity</span>
-                </div>
-                <div class="modal-controls">
-                    <button class="modal-btn print-btn">
-                        <i class="fas fa-print"></i>
-                        Print
-                    </button>
-                    <button class="modal-btn download-btn">
-                        <i class="fas fa-download"></i>
-                        Download PDF
-                    </button>
-                    <button class="modal-btn close-btn" id="closeBlueprint">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="blueprint-content" id="blueprint">
-                <div class="blueprint-header">
-                    <div class="blueprint-logo">W</div>
-                    <div class="blueprint-info">
-                        <h1>AI-Powered Dropshipping Analytics</h1>
-                        <p class="blueprint-subtitle">Complete Business Architecture</p>
-                        <div class="blueprint-meta">
-                            <span><i class="fas fa-calendar"></i> Generated: Dec 19, 2024</span>
-                            <span><i class="fas fa-clock"></i> Analysis Time: 2.4 minutes</span>
-                            <span><i class="fas fa-chart-line"></i> Confidence Score: 94%</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="blueprint-sections">
-                    <div class="blueprint-section">
-                        <h3><i class="fas fa-bullseye"></i> Market Opportunity</h3>
-                        <p>Untapped niche in AI-powered dropshipping analytics with estimated $42M TAM.</p>
-                        <div class="metrics-grid">
-                            <div class="metric-item">
-                                <span class="metric-value">240%</span>
-                                <span class="metric-label">Growth Potential</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-value">0.2</span>
-                                <span class="metric-label">Competition Score</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-value">18</span>
-                                <span class="metric-label">Months to Profit</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="blueprint-section">
-                        <h3><i class="fas fa-sitemap"></i> Technical Architecture</h3>
-                        <p>Full-stack TypeScript/Next.js application with Python microservices.</p>
-                        <pre class="code-block">
-├── frontend/
-│   ├── Next.js 14 (App Router)
-│   ├── Tailwind CSS + Shadcn/ui
-│   └── Recharts for analytics
-├── backend/
-│   ├── FastAPI microservices
-│   ├── PostgreSQL + Redis
-│   └── Celery for async tasks
-└── infrastructure/
-    ├── Vercel deployment
-    ├── AWS Lambda functions
-    └── CloudFlare CDN</pre>
-                    </div>
-                    
-                    <div class="blueprint-section">
-                        <h3><i class="fas fa-money-bill-wave"></i> Revenue Model</h3>
-                        <p>Tiered SaaS pricing with estimated $12.5k MRR within 6 months.</p>
-                        <div class="pricing-grid">
-                            <div class="pricing-tier">
-                                <h4>Starter</h4>
-                                <p class="price">$29<span>/mo</span></p>
-                                <ul>
-                                    <li>Basic analytics</li>
-                                    <li>3 connected stores</li>
-                                </ul>
-                            </div>
-                            <div class="pricing-tier featured">
-                                <h4>Pro</h4>
-                                <p class="price">$99<span>/mo</span></p>
-                                <ul>
-                                    <li>AI predictions</li>
-                                    <li>Unlimited stores</li>
-                                    <li>Priority support</li>
-                                </ul>
-                            </div>
-                            <div class="pricing-tier">
-                                <h4>Enterprise</h4>
-                                <p class="price">$499<span>/mo</span></p>
-                                <ul>
-                                    <li>Custom models</li>
-                                    <li>White-label</li>
-                                    <li>Dedicated AI</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="blueprint-footer">
-                    <div class="signature">
-                        <div class="signature-line"></div>
-                        <p>Generated by Wyronix Trinity AI</p>
-                    </div>
-                    <div class="watermark">CONFIDENTIAL</div>
-                </div>
+
+        </section>
+
+        <div class="spotlight-wrapper">
+            <div class="spotlight-bar">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="userInput" placeholder="Describe your idea..." autocomplete="off">
+                <span class="cmd-hint">↵ Enter</span>
             </div>
         </div>
+
+    </main>
+
+    <div id="blueprintModal" class="modal-blur hidden">
+        <div class="modal-card">
+            <div class="modal-top">
+                <h3>Executive Report</h3>
+                <button id="btnCloseModal" class="close-x">✕</button>
+            </div>
+            <div id="modalContent" class="modal-text"></div>
+        </div>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
-

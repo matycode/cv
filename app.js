@@ -1,138 +1,274 @@
-// Wyronix V3 - Liquid Glass Trinity
-// Lightweight interactions: section navigation, chat simulation, modal control, dynamic island pulse
+/**
+ * WYRONIX V3 - CORE CLIENT
+ * Mode: STEALTH / CONSOLE
+ */
 
-// Helpers
-const qs = (sel, ctx = document) => ctx.querySelector(sel);
-const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+class WyronixEngine {
+  constructor() {
+      this.API_URL = "http://localhost:8000/api/v1"; 
+      
+      this.state = {
+          status: 'STANDBY', 
+          idea: '',
+          sessionId: null
+      };
+      
+      // MAP DOM ELEMENTS
+      // We use '?' to safely select elements even if they are missing
+      this.dom = {
+          input: document.getElementById('userInput'),
+          island: document.getElementById('dynamicIsland'),
+          islandText: document.getElementById('islandText'),
+          islandSpinner: document.getElementById('islandSpinner'),
+          islandDot: document.getElementById('islandStatusDot'),
+          
+          // Cards
+          cardSearch: document.getElementById('cardSearch'),
+          cardAnalyst: document.getElementById('cardAnalyst'),
+          cardDev: document.getElementById('cardDev'),
+          
+          // Outputs
+          terminal: document.getElementById('searchTerminal'),
+          tags: document.getElementById('searchTags'),
+          gauges: document.getElementById('analystGauges'),
+          verdict: document.getElementById('analystVerdict'),
+          fileTree: document.getElementById('fileTree'),
+          codePreview: document.getElementById('codePreview'),
+          btnExport: document.getElementById('btnExport'),
+          
+          // Modal
+          modal: document.getElementById('blueprintModal'),
+          modalContent: document.getElementById('modalContent'),
+          btnClose: document.getElementById('btnCloseModal')
+      };
 
-// Elements
-const navItems = qsa('.nav-item[data-target]');
-const chatInput = qs('#chatInput');
-const sendBtn = qs('#sendCommand');
-const chatHistory = qs('#chatHistory');
-const promptPills = qsa('.prompt-pill');
-const blueprintModal = qs('#blueprintModal');
-const modalClose = qs('#modalClose');
-const closeBlueprint = qs('#closeBlueprint');
-const initializeSystemBtn = qs('#initializeSystem');
-const islandStatus = qs('#islandStatus');
-const trinityPulse = qs('#trinityPulse');
-const deployButton = qs('#deployButton');
+      this.initListeners();
+      this.checkServerHealth();
+      console.log("[SYSTEM] Wyronix Client Loaded.");
+  }
 
-// Smooth scroll to section
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  initListeners() {
+      // LISTENER 1: The Enter Key (Main Trigger)
+      if (this.dom.input) {
+          this.dom.input.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                  console.log("[INPUT] Enter key detected.");
+                  this.initiateRealProtocol();
+              }
+          });
+      } else {
+          console.error("❌ Critical Error: Input box 'userInput' not found in HTML.");
+      }
+      
+      // LISTENER 2: Export Button
+      if (this.dom.btnExport) {
+          this.dom.btnExport.addEventListener('click', () => this.downloadRealReport());
+      }
+
+      // LISTENER 3: Modal Close
+      if (this.dom.btnClose) {
+          this.dom.btnClose.addEventListener('click', () => {
+              this.dom.modal.classList.add('hidden'); // Fix for clean HTML class
+              this.dom.modal.classList.remove('visible');
+          });
+      }
+  }
+
+  async checkServerHealth() {
+      try {
+          const response = await fetch(`${this.API_URL}/health`);
+          if (response.ok) {
+              console.log("[NETWORK] Backend is Online.");
+              this.updateIsland('idle', 'SYSTEM ONLINE');
+              if(this.dom.islandDot) this.dom.islandDot.style.background = '#00ff9d';
+          }
+      } catch (error) {
+          console.warn("[NETWORK] Backend Offline:", error);
+          this.updateIsland('idle', 'OFFLINE MODE');
+          if(this.dom.islandDot) this.dom.islandDot.style.background = '#ff2a6d';
+      }
+  }
+
+  async initiateRealProtocol() {
+      const idea = this.dom.input.value.trim();
+      if (!idea) {
+          this.shakeInput();
+          return;
+      }
+
+      console.log(`[ACTION] Initiating sequence for: ${idea}`);
+
+      // LOCK UI
+      this.state.idea = idea;
+      this.state.status = 'CONNECTING';
+      this.updateIsland('active', 'ESTABLISHING UPLINK...', true);
+      this.resetUI();
+
+      try {
+          // CALL MIDDLEWARE
+          const response = await fetch(`${this.API_URL}/start`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ project_idea: idea })
+          });
+
+          if (!response.ok) throw new Error("Server Rejected Connection");
+
+          const data = await response.json();
+          console.log("[NETWORK] Session Created:", data.session_id);
+          this.state.sessionId = data.session_id;
+
+          // CONNECT SOCKET
+          this.connectWebSocket(this.state.sessionId);
+
+      } catch (error) {
+          console.error("[ERROR]", error);
+          this.updateIsland('idle', 'CONNECTION FAILED');
+          this.logToTerminal(`[ERROR] Connection Refused: ${error.message}`);
+          if(this.dom.islandDot) this.dom.islandDot.style.background = '#ff2a6d';
+      }
+  }
+
+  connectWebSocket(sessionId) {
+      this.updateIsland('active', 'AWAITING NEURAL FEED...', true);
+      
+      const socket = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
+
+      socket.onopen = () => {
+          console.log("[SOCKET] Connected.");
+          this.logToTerminal("[SYSTEM] Secure Uplink Established.");
+      };
+
+      socket.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          this.handleBackendMessage(msg);
+      };
+
+      socket.onerror = (error) => {
+          console.error("[SOCKET] Error:", error);
+          this.logToTerminal("[ERROR] Signal Lost.");
+      };
+
+      socket.onclose = () => {
+          console.log("[SOCKET] Closed.");
+          this.updateIsland('success', 'SEQUENCE COMPLETE', false);
+          if(this.dom.btnExport) {
+              this.dom.btnExport.classList.remove('hidden');
+              this.dom.btnExport.disabled = false;
+          }
+      };
+  }
+
+  handleBackendMessage(msg) {
+      // Route traffic to correct card
+      switch(msg.agent) {
+          case 'SEARCH':
+              this.setActiveCard(this.dom.cardSearch);
+              this.logToTerminal(`> ${msg.content}`);
+              if(msg.data && msg.data.tag) this.addTag(msg.data.tag);
+              break;
+
+          case 'ANALYST':
+              this.completeCard(this.dom.cardSearch);
+              this.setActiveCard(this.dom.cardAnalyst);
+              if (msg.metrics) {
+                  this.dom.gauges.classList.remove('opacity-0');
+                  if(document.getElementById('valHeat')) document.getElementById('valHeat').innerText = msg.metrics.heat + "%";
+                  if(document.getElementById('valROI')) document.getElementById('valROI').innerText = msg.metrics.roi + "%";
+                  this.dom.verdict.innerText = msg.metrics.verdict;
+                  this.dom.verdict.classList.remove('hidden');
+              }
+              break;
+
+          case 'DEV':
+              this.completeCard(this.dom.cardAnalyst);
+              this.setActiveCard(this.dom.cardDev);
+              if (msg.file) this.addFile(msg.file);
+              if (msg.code) this.appendCode(msg.code);
+              break;
+              
+          case 'COMPLETE':
+              this.completeCard(this.dom.cardDev);
+              break;
+      }
+  }
+
+  /* --- UI HELPERS --- */
+  updateIsland(mode, text, showSpinner) {
+      this.dom.island.className = `dynamic-island ${mode}`;
+      this.dom.islandText.innerText = text;
+      if (showSpinner) {
+          if(this.dom.islandSpinner) this.dom.islandSpinner.classList.remove('hidden');
+          if(this.dom.islandDot) this.dom.islandDot.classList.add('hidden');
+      } else {
+          if(this.dom.islandSpinner) this.dom.islandSpinner.classList.add('hidden');
+          if(this.dom.islandDot) this.dom.islandDot.classList.remove('hidden');
+      }
+  }
+
+  setActiveCard(card) {
+      if(!card) return;
+      [this.dom.cardSearch, this.dom.cardAnalyst, this.dom.cardDev].forEach(c => {
+          if(c) c.style.opacity = '0.4';
+      });
+      card.style.opacity = '1';
+      card.classList.add('active-card');
+  }
+
+  completeCard(card) {
+      if(!card) return;
+      card.classList.remove('active-card');
+      card.style.borderColor = 'rgba(255,255,255,0.1)';
+      // Restore opacity
+      [this.dom.cardSearch, this.dom.cardAnalyst, this.dom.cardDev].forEach(c => {
+          if(c) c.style.opacity = '1';
+      });
+  }
+
+  logToTerminal(text) {
+      if(!this.dom.terminal) return;
+      const p = document.createElement('div');
+      p.className = 'log-entry';
+      p.innerText = text;
+      this.dom.terminal.appendChild(p);
+      this.dom.terminal.scrollTop = this.dom.terminal.scrollHeight;
+  }
+
+  addTag(text) {
+      if(!this.dom.tags) return;
+      const span = document.createElement('span');
+      span.className = 'tag';
+      span.innerText = text;
+      this.dom.tags.appendChild(span);
+  }
+
+  addFile(filename) {
+      if(!this.dom.fileTree) return;
+      const div = document.createElement('div');
+      div.innerText = '📄 ' + filename;
+      div.style.marginBottom = "4px";
+      this.dom.fileTree.appendChild(div);
+  }
+
+  appendCode(text) {
+      if(this.dom.codePreview) this.dom.codePreview.innerText += text;
+  }
+
+  shakeInput() {
+      this.dom.input.parentElement.style.borderColor = 'var(--accent-red)';
+      setTimeout(() => this.dom.input.parentElement.style.borderColor = 'rgba(255,255,255,0.1)', 500);
+  }
+
+  resetUI() {
+      if(this.dom.terminal) this.dom.terminal.innerHTML = '';
+      if(this.dom.tags) this.dom.tags.innerHTML = '';
+      if(this.dom.fileTree) this.dom.fileTree.innerHTML = '<div class="tree-root">/root</div>';
+      if(this.dom.codePreview) this.dom.codePreview.innerText = '';
+      if(this.dom.verdict) this.dom.verdict.classList.add('hidden');
+      if(this.dom.gauges) this.dom.gauges.classList.add('opacity-0');
+      if(this.dom.btnExport) this.dom.btnExport.classList.add('hidden');
   }
 }
 
-// Nav interactions
-navItems.forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    navItems.forEach((n) => n.classList.remove('active'));
-    btn.classList.add('active');
-    const target = btn.dataset.target;
-    if (target === 'blueprint' && blueprintModal) {
-      blueprintModal.classList.add('open');
-      return;
-    }
-    scrollToSection(target);
-  });
-});
-
-// Chat
-function addMessage(text, role = 'ai') {
-  if (!chatHistory) return;
-  const wrapper = document.createElement('div');
-  wrapper.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  wrapper.innerHTML = `
-    <div class="message-avatar">
-      <i class="fas fa-${role === 'user' ? 'user' : 'robot'}"></i>
-    </div>
-    <div class="message-content">
-      <p>${text}</p>
-      <span class="message-time">${time}</span>
-    </div>
-  `;
-  chatHistory.appendChild(wrapper);
-  chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
-}
-
-function sendMessage() {
-  if (!chatInput || !chatHistory) return;
-  const text = chatInput.value.trim();
-  if (!text) return;
-  addMessage(text, 'user');
-  chatInput.value = '';
-
-  // Simulated response
-  setTimeout(() => {
-    const responses = [
-      'Trinity acknowledged. Running multi-agent pipeline.',
-      'Search Hub scanning live sources. Analyst Hub synthesizing signals.',
-      'Developer Hub preparing deployment scripts.',
-      'All hubs synced. Rendering executive summary.'
-    ];
-    const reply = responses[Math.floor(Math.random() * responses.length)];
-    addMessage(reply, 'ai');
-  }, 900 + Math.random() * 800);
-}
-
-if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-if (chatInput) {
-  chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-}
-
-// Quick prompts
-promptPills.forEach((pill) => {
-  pill.addEventListener('click', () => {
-    const prompt = pill.dataset.prompt || pill.textContent.trim();
-    if (chatInput) {
-      chatInput.value = prompt;
-      chatInput.focus();
-    }
-    scrollToSection('market');
-  });
-});
-
-// Blueprint modal
-function closeModal() {
-  if (blueprintModal) blueprintModal.classList.remove('open');
-}
-if (modalClose) modalClose.addEventListener('click', closeModal);
-if (closeBlueprint) closeBlueprint.addEventListener('click', closeModal);
-
-// Initialize system pulse
-if (initializeSystemBtn) {
-  initializeSystemBtn.addEventListener('click', () => {
-    if (islandStatus) islandStatus.textContent = 'System: Initializing…';
-    if (trinityPulse) trinityPulse.classList.add('active');
-    setTimeout(() => {
-      if (islandStatus) islandStatus.textContent = 'System: Operational';
-      if (trinityPulse) trinityPulse.classList.remove('active');
-    }, 2000);
-  });
-}
-
-// Deploy button feedback
-if (deployButton) {
-  deployButton.addEventListener('click', () => {
-    deployButton.classList.add('pulse');
-    addMessage('Deploying to Vercel… Build pipeline engaged.', 'ai');
-    setTimeout(() => deployButton.classList.remove('pulse'), 1500);
-  });
-}
-
-// Dynamic island default state
-window.addEventListener('load', () => {
-  scrollToSection('dashboard');
-});
-
+// START ENGINE
+const Engine = new WyronixEngine();
