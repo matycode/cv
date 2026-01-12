@@ -1,70 +1,149 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>malik's personalsite</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyronix | Spatial Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <table cellspacing="20">
-    <tr>
-      <td><img src="https://ss-i.thgim.com/public/boxing/metbai/article65951605.ece/alternates/LANDSCAPE_435/boxingjpg" alt="malik porfile pic"></td>
-      <td><h1>malik tycoon</h1>
-      <p><em><strong>coder</strong> <strong>and</strong> <strong>gamer</strong>.</em></p>
-      <p>am a <strong>fan</strong> <strong>of</strong> <strong>gameing and codeing</strong> <strong>and i love</strong> <strong>minecraft</strong> <strong>so much</strong>.</p></td>
-    </tr>
-  </table>
-  <hr>
-  <h3>books and teaching</h3>
-  <ul>
-    <li>the complete game named flight similater flying microsoft game.</li>
-    <li>the complete game named fortnight play on ps4 or ps5.</li>
-  </ul>
-  <hr>
-  <h3>work experience.</h3>
-<table border="1">
 
-</table cellspacing="10">
-  <th>Dates</th>
-  <th>work</th>
-  </tr>
-  <tr>
-    <td>2010-2015</td>
-    <td>lead diveloper at tempo app.</td>
-  </tr>
-  <tr>
-  <td>2016</td>
-  <td>gameing onmy computer and laptop.</td>
-  </tr>
-</table>
-<hr>
-<h3>skills</h3>
-<table cellspacing="10s">
-  <tr>
-    <td>
-      <table>
-        <tr>
-          <td>codeing and gameing</td>
-          <td>✅✅✅✅✅</td>
-        </tr>
-        <tr>
-          <td>makeing  games</td>
-          <td>✅✅✅✅✅</td>
-        </tr>
-        <tr>
-          <td>boxing and sports</td>
-          <td>✅✅✅✅</td>
-        </tr>
-      </table>
-    </td>
+    <div class="aurora-bg">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+    </div>
 
-  </tr>
-</table>
+    <div class="island-container">
+        <div id="dynamicIsland" class="island-pill idle">
+            <div class="island-content">
+                <div id="islandSpinner" class="spinner hidden"></div>
+                <div id="islandStatusDot" class="status-dot"></div>
+                <span id="islandText" class="island-label">Wyronix Ready</span>
+            </div>
+        </div>
+    </div>
 
-<hr>
-  <a href="hobbies.html">my hobbies</a>
-  <a href="contact-me.html">contact me</a>
+    <main class="workspace">
+        
+        <header class="glass-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Wyronix <span class="badge">PRO</span></span>
+            </div>
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+        </header>
+
+        <section class="bento-grid">
+
+            <div id="cardSearch" class="glass-panel" data-step="01">
+                <div class="panel-head">
+                    <div class="icon-sq blue-gradient">🌐</div>
+                    <h4>Market Intelligence</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="searchTerminal" class="clean-log">
+                        <div class="empty-state">Waiting for input...</div>
+                    </div>
+                    <div id="searchTags" class="tag-row"></div>
+                </div>
+            </div>
+
+            <div id="cardAnalyst" class="glass-panel" data-step="02">
+                <div class="panel-head">
+                    <div class="icon-sq purple-gradient">⚡</div>
+                    <h4>Strategic Analyst</h4>
+                </div>
+                <div class="panel-body centered">
+                    <div id="analystGauges" class="iso-bar-group opacity-0">
+                        <div class="iso-bar-container">
+                            <div class="iso-bar-label-row">
+                                <span class="iso-bar-label">Market Heat</span>
+                                <span id="valHeat" class="iso-bar-value">0%</span>
+                            </div>
+                            <div class="iso-bar-track">
+                                <div id="progressHeat" class="iso-bar-fill iso-bar-emerald"></div>
+                            </div>
+                        </div>
+                        <div class="iso-bar-container">
+                            <div class="iso-bar-label-row">
+                                <span class="iso-bar-label">ROI Viability</span>
+                                <span id="valROI" class="iso-bar-value">0%</span>
+                            </div>
+                            <div class="iso-bar-track">
+                                <div id="progressROI" class="iso-bar-fill iso-bar-violet"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="analystVerdict" class="verdict-text hidden"></div>
+                </div>
+            </div>
+
+            <div id="cardDev" class="glass-panel" data-step="03">
+                <div class="panel-head">
+                    <div class="icon-sq green-gradient">🛠️</div>
+                    <h4>Solution Architect</h4>
+                </div>
+                <div class="panel-body split">
+                    <div id="fileTree" class="file-list">
+                        <div class="root-folder">Project Root</div>
+                    </div>
+                    <div id="codePreview" class="code-view"></div>
+                </div>
+                <div class="panel-foot">
+                    <button id="btnExport" class="glass-btn hidden">Download Report ↗</button>
+                </div>
+            </div>
+
+        </section>
+
+        <div class="spotlight-wrapper">
+            <div class="spotlight-bar">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="userInput" placeholder="Describe your idea..." autocomplete="off">
+                <span class="cmd-hint">↵ Enter</span>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="blueprintModal" class="modal-blur hidden">
+        <div class="modal-card">
+            <div class="modal-top">
+                <h3>Executive Report</h3>
+                <button id="btnCloseModal" class="close-x">✕</button>
+            </div>
+            <div id="modalContent" class="modal-text"></div>
+        </div>
+    </div>
+
+    <div id="paywallModal" class="modal-blur hidden">
+        <div class="modal-card paywall-card">
+            <div class="modal-top">
+                <h3>Premium Subscription Required</h3>
+                <button id="btnClosePaywall" class="close-x">✕</button>
+            </div>
+            <div class="paywall-content">
+                <p class="paywall-text">You've reached your free search limit (3 searches/day).</p>
+                <p class="paywall-subtext">Upgrade to Pro for unlimited real-time intelligence and 3D visualizations.</p>
+                <a id="btnUpgrade" href="#" target="_blank" class="glass-btn upgrade-btn">Upgrade to Pro - $29/mo</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
-
 </html>
